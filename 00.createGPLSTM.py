@@ -1,4 +1,4 @@
-'''Creates the GPLSTM model used by RW_propagation_GPLSTM.py'''
+'''This script creates the GPLSTM model used by RW_propagation_GPLSTM.py'''
 
 import numpy as np
 # Keras
