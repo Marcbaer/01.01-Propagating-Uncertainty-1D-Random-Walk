@@ -3,15 +3,19 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-
 #plotting parameter
 plt.rcParams["figure.figsize"] = [4.0, 3.0]
 
 #load results
 test=1
+start_point=10
+steps=7
+
+end_point=start_point+steps
+
 results = pickle.load(open('./Results/res_propagation_test'+str(test)+'.p', 'rb'))
 
-y_test=np.array(results['y_test'])
+RW_initial=np.array(results['RW_initial'])
 K_d=results['K_d']
 MEAN_d=results['MEAN_d']
 VAR_d=results['VAR_d']
@@ -20,7 +24,7 @@ W=results['W']
 w=results['w']
 mean_1=results['mean_1']
 var_1=results['var_1']
-
+y_test=results['y_test']
 n_steps=results['n_steps']
 n_samples=results['n_samples']
 
@@ -72,17 +76,21 @@ plt.grid(False)
 plt.xlabel('#step')
 plt.title('Random walk propagation')
 plt.legend(loc=2,prop={'size': 6})
-plt.savefig('./Figures/Prop_nsamples'+str(n_samples)+'_nsteps'+str(n_steps)+'.png')
+plt.savefig('./Figures/RW_Uncertainty_nsamples_'+str(n_samples)+'_nsteps_'+str(n_steps)+'.png')
 plt.show()
 
 
 '''RW plot'''  
 
-data=y_test[0,:11,:]
+index=int(np.where(RW_initial==X_initial)[0])
+RW=RW_initial[index+1:index+1+n_steps]
+
+data=y_test[0,start_point:start_point+steps,:]
 x=[]
-y1=[data[0]]
-y2=[data[0]]
+y1=[X_initial]
+y2=[X_initial]
 mean1=[]
+
 for i in range(1,n_steps+1):
     pos=[i]
     y1.append(min(K_d['K{0}'.format(i)]))
@@ -95,13 +103,13 @@ x1=np.append(0,x)
 y1=np.array(y1).reshape(len(x1),)
 y2=np.array(y2).reshape(len(x1),)    
 plt.plot(x,mean1,label='predicted mean',color='blue',marker='o',linestyle='--')
-plt.plot(x,data[1:len(x1)],label='Random Walk',marker='o',linestyle='--',color='red')
+plt.plot(x,RW,label='Random Walk',marker='o',linestyle='--',color='red')
 plt.fill_between(x1,y1,y2,facecolor='lightgrey',label='confidence bound')
 
-plt.scatter(0,data[0],color='green',label='initial point')
+plt.scatter(0,X_initial,color='green',label='initial point')
 
 plt.xlabel('#step')
 plt.title('Predicted mean vs. true values')
 plt.legend(loc=2,prop={'size': 6})
-plt.savefig('./Figures/RW_uncertainty1.png')
+plt.savefig('./Figures/RW_path_propagation_test_{}.png'.format(test))
 

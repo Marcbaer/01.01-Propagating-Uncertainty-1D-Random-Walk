@@ -2,19 +2,9 @@
 
 import numpy as np
 from createGPLSTM import GPLSTM,Generate_data
-import matplotlib.pyplot as plt
 import pickle
-import matplotlib
 import warnings
 warnings.simplefilter(action='ignore')
-
-
-plt.rcParams["figure.figsize"] = [4., 3.]
-SMALL_SIZE = 10
-matplotlib.rc('axes', titlesize=SMALL_SIZE)
-matplotlib.rc('font', size=SMALL_SIZE)
-plt.tick_params(labelsize=10)
-
 
 #test number
 test=1
@@ -24,19 +14,23 @@ lr=1e-3 #compiling the model
 sample_size=1000
 batch_size=100
 
+n_steps=7
+start_point=10
 
 #load data
-data=Generate_data(shift)
+data_shape,RW=Generate_data(shift,sample_size)
+
 data = pickle.load(open('./Results/RW_data_test'+str(test)+'.p', 'rb'),encoding='latin1')
 X_test=data['X_test']
 X_train=data['X_train']
 y_train=data['y_train']
 y_test=data['y_test']
+RW_initial=data['RW_initial']
 data={}
 data['train']=[X_train,y_train]
 
 #initialize GPLSTM model
-model=GPLSTM(shift,lr,sample_size,batch_size)
+model=GPLSTM(shift,lr,sample_size,batch_size,data_shape)
 
 #load best models for every single mode and finetune, specify checkpoint
 model.load_weights('./checkpoints/lstm_1.h5')
@@ -44,7 +38,7 @@ model.finetune(*data['train'],batch_size=500,gp_n_iter=100,verbose=0)
 print('finetuning done')
 
 #get initial point we want to propagate
-X=X_test[:1,:,:]
+X=X_test[start_point:start_point+1,:,:]
 X1=np.concatenate((X,X),axis=0) #concatenated only to avoid dimension error
 
 #predict mean&var of initial point
@@ -64,9 +58,8 @@ MEAN_d["mean{0}".format(0)]=[mean_1,0]
 VAR_d["var{0}".format(0)]=[var_1,0]
 
 # number of sampling points per step
-n_samples=100
+n_samples=80
 #number of steps propagating into the future
-n_steps=5
 for n in range(1,n_steps+1):   
         #initialize new history index
         K=[]
@@ -106,7 +99,7 @@ for n in range(1,n_steps+1):
             X_hist.append(X_new1)
             MEAN.append(mean_2)
             VAR.append(var_2)
-            print('sample done', j)
+            print('step {}/{} sample done {}/{}'.format(n,n_steps,j,n_samples))
             
         #append new history to dictionnaries
         K_d["K{0}".format(n)]=np.array(K)
@@ -125,6 +118,6 @@ w=np.full((),0)
 X=np.array(X_hist_d['hist0'][0])
 X_initial=X[:,-1,0]
 
-#safe results
-res={'K_d': K_d,'MEAN_d':MEAN_d,'VAR_d':VAR_d,'X_hist_d':X_hist_d,'W':W,'w':w,'mean_1':mean_1,'var_1':var_1,'n_samples':n_samples,'n_steps':n_steps,'y_test':y_test}
+#save results
+res={'K_d': K_d,'MEAN_d':MEAN_d,'VAR_d':VAR_d,'X_hist_d':X_hist_d,'W':W,'w':w,'mean_1':mean_1,'var_1':var_1,'n_samples':n_samples,'n_steps':n_steps,'RW_initial':RW_initial,'y_test':y_test}
 pickle.dump(res, open('./Results/res_propagation_test'+str(test)+'.p', "wb"))

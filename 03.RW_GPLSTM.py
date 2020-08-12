@@ -21,7 +21,7 @@ matplotlib.rc('axes', titlesize=SMALL_SIZE)
 matplotlib.rc('font', size=SMALL_SIZE)
 plt.tick_params(labelsize=10)
     
-#np.random.seed(5)
+np.random.seed(5)
 
 #test number
 test=1
@@ -37,10 +37,10 @@ def main(shift,sample_size,batch_size,epochs):
     '''Create GPLSTM Model and Train it on the Random Walk
        Returns: Model and Training Results'''
     
-    data=Generate_data(shift,sample_size)
+    data,RW_initial=Generate_data(shift,sample_size)
     
     # Model & training parameters
-    model=GPLSTM(shift,lr,sample_size,batch_size)
+    model=GPLSTM(shift,lr,sample_size,batch_size,data)
     
     callbacks = []
     
@@ -58,12 +58,12 @@ def main(shift,sample_size,batch_size,epochs):
     X_test,y_test =data['test']
     X_train,y_train=data['train']
            
-    return history,X_test,X_train,y_train,batch_size,y_test,model
+    return history,X_test,X_train,y_train,batch_size,y_test,model,RW_initial
 
 
 if __name__ == '__main__':
 
-    history,X_test,X_train,y_train,batch_size,y_test,model=main(shift,sample_size,batch_size,epochs)
+    history,X_test,X_train,y_train,batch_size,y_test,model,RW_initial=main(shift,sample_size,batch_size,epochs)
 
     y_pred,var = model.predict(X_test,return_var=True, X_tr=X_train, Y_tr=y_train,batch_size=batch_size)
     
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     training_error=np.array(training_error)
     training_error=training_error/y_test.shape[0]
     
-    res={'X_test':X_test,'X_train':X_train,'y_train':y_train,'y_test':y_test} 
+    res={'X_test':X_test,'X_train':X_train,'y_train':y_train,'y_test':y_test,'RW_initial':RW_initial} 
     pickle.dump(res, open('./Results/RW_Data_test'+str(test)+'.p', "wb"))
     
     #Training convergence
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     plt.plot(validation_error,label='validation_error')
     plt.plot(training_error,label='training_error')
     plt.legend()
-    plt.savefig('./Figures/Training_convergence')
+    plt.savefig('./Figures/Training_convergence_Test_{}'.format(test))
     plt.show()
 
     #one step ahead
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     plt.errorbar(J,y_pred[0,start:start+size,0],yerr=std2[0,start:start+size,0],capsize=0,fmt='',ecolor='grey',label='Predicted mean and 95% confidence',marker='.',markersize=10,ls='none')
     plt.scatter(J,y_test[0,start:start+size],label='True value',color='red',marker='o')
     plt.legend(loc=2, prop={'size': 12})
-    plt.savefig('./Figures/RW_pred_shift1.pdf')
+    plt.savefig('./Figures/Predictive_Distributions_Test_{}.pdf'.format(test))
     plt.show()
     
     print('max variance: ',max(var[0,:]),' min variance: ', min(var[0,:]))
@@ -128,7 +128,7 @@ if __name__ == '__main__':
     plt.hist(k,bins=30)
     plt.xlabel('step size')
     plt.ylabel('#points')
-    plt.savefig('./Figures/Grid_step_hist_1.pdf')
+    plt.savefig('./Figures/Stepsize_Predictions_Test_{}.pdf'.format(test))
     plt.show()
     
     #plot estimated variances, should be distributed around 0.1
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     plt.xlabel('variance')
     plt.ylabel('#points')
     plt.legend()
-    plt.savefig('./Figures/Grid_var_hist_1.pdf')
+    plt.savefig('./Figures/Variance_Predictions_Test_{}.pdf'.format(test))
     plt.show()    
 
 

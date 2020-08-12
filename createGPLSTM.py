@@ -27,7 +27,7 @@ def Generate_data(shift,sample_size=1000):
     total_length=sequence_length+shift
     
     data=RandomWalk(N=sample_size+shift+1,d=1)
- 
+    RW_initial=data.copy()
     #create sequences with length sequence_length
     result = []
     for index in range(len(data) - total_length):
@@ -78,12 +78,12 @@ def Generate_data(shift,sample_size=1000):
         y = y.reshape((-1, 1, np.prod(y.shape[1:])))
         data[set_name][1] = [y[:,:,i] for i in range(y.shape[2])]
     
-    return data    
+    return data,RW_initial
     
 
-def GPLSTM(shift,lr,sample_size,batch_size):
+def GPLSTM(shift,lr,sample_size,batch_size,data):
     
-    data=Generate_data(shift,sample_size)
+    #data,RW_initial=Generate_data(shift,sample_size)
     # Model & training parameters
     nb_train_samples = data['train'][0].shape[0]
     input_shape = data['train'][0].shape[1:]
