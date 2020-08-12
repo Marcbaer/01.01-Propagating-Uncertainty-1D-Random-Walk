@@ -1,4 +1,4 @@
-'''Visualization of One Dimensional Random Walks'''
+'''Visualization of one dimensional random walks'''
 
 import numpy as np
 import matplotlib.pyplot as plt
