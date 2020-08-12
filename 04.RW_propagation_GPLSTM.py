@@ -21,6 +21,9 @@ test=1
 shift=1 #nr of steps into the future
 seq_len=2
 lr=1e-3 #compiling the model
+sample_size=1000
+batch_size=100
+
 
 #load data
 data=Generate_data(shift)
@@ -33,7 +36,7 @@ data={}
 data['train']=[X_train,y_train]
 
 #initialize GPLSTM model
-model=GPLSTM(shift,lr)
+model=GPLSTM(shift,lr,sample_size,batch_size)
 
 #load best models for every single mode and finetune, specify checkpoint
 model.load_weights('./checkpoints/lstm_1.h5')

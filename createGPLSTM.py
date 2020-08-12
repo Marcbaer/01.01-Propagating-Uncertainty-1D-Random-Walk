@@ -16,12 +16,11 @@ def RandomWalk(N=100, d=1):
     return np.cumsum(np.random.normal(0,0.3162,(N,d)))
 
 
-def Generate_data(shift):
+def Generate_data(shift,sample_size=1000):
     """Generate input data of shape (N,d) where d is the sequence length.
     and output data of shape (N,1) for one step ahead predictions.
     """
     
-    sample_size=1000
     #1D input data:
     sequence_length=2
     
@@ -82,15 +81,15 @@ def Generate_data(shift):
     return data    
     
 
-def GPLSTM(shift,lr):
+def GPLSTM(shift,lr,sample_size,batch_size):
     
-    data=Generate_data(shift)
+    data=Generate_data(shift,sample_size)
     # Model & training parameters
     nb_train_samples = data['train'][0].shape[0]
     input_shape = data['train'][0].shape[1:]
     nb_outputs = len(data['train'][1])
     gp_input_shape = (1,)
-    batch_size = 500
+    batch_size = batch_size
 
     nn_params = {
         'H_dim': 4,
@@ -101,7 +100,7 @@ def GPLSTM(shift,lr):
     gp_params = {
         'cov': 'SEiso', 
         'hyp_lik': np.log(0.1),
-        'hyp_cov': [[0.1], [0.0]],     
+        'hyp_cov': [[1.0], [1.0]],     
     }
     
     # Retrieve model config
@@ -118,7 +117,7 @@ def GPLSTM(shift,lr):
     # Construct & compile the model
     model = assemble('GP-LSTM', [nn_configs['1H'], gp_configs['GP']]) #MSGP
     loss = [gen_gp_loss(gp) for gp in model.output_layers]
-    model.compile(optimizer=Adam(1e-3), loss=loss)
+    model.compile(optimizer=Adam(lr), loss=loss)
   
     return model
 

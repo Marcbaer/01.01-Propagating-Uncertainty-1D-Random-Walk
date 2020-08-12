@@ -1,22 +1,18 @@
 '''This script trains a GPLSTM and predicts with shift n. Including prediction plots, variance and step-size histogramms '''
 
-from __future__ import print_function
 import numpy as np
-# Keras
-from keras.optimizers import Adam
+from createGPLSTM import GPLSTM,Generate_data
+
 # Model assembling and executing
 from kgp.utils.experiment import train
 # Metrics & losses
-from kgp.losses import gen_gp_loss
 from kgp.metrics import root_mean_squared_error as RMSE
 import pickle
 import matplotlib.pyplot as plt
-from kgp.utils.assemble import load_NN_configs, load_GP_configs, assemble
 import matplotlib
 from matplotlib.ticker import StrMethodFormatter
 import warnings
 warnings.simplefilter(action='ignore')
-
 
 #Plotting parameters
 plt.rcParams["figure.figsize"] = [4., 3.]
@@ -25,132 +21,26 @@ matplotlib.rc('axes', titlesize=SMALL_SIZE)
 matplotlib.rc('font', size=SMALL_SIZE)
 plt.tick_params(labelsize=10)
     
-np.random.seed(5)
+#np.random.seed(5)
 
-shift=1
+#test number
 test=1
+shift=1 #nr of steps into the future
+seq_len=2
+lr=1e-3 #compiling the model
 
-def RandomWalk(N=100, d=1):
-    '''Creates 1 dimensional Random Walk of length N
-       Returns: Random Walk'''
-    return np.cumsum(np.random.normal(0,0.3162,(N,d)))
+epochs=20
+sample_size=1000
+batch_size=100
 
-
-def Generate_data(shift):
-    """Generate input data of shape (N,d) where d is the sequence length.
-    and output data of shape (N,1) for one step ahead predictions.
-    Returns: Data for training and testing the model
-    """
-    
-    sample_size=1000
-
-    sequence_length=2
-    
-    total_length=sequence_length+shift
-    
-    data=RandomWalk(N=sample_size+shift+1,d=1)
- 
-    #create sequences with length sequence_length
-    result = []
-    for index in range(len(data) - total_length):
-        
-        i=data[index: index + total_length]
-        k=i[:sequence_length]
-        j=np.array(i[total_length-1])
-        j=j.reshape(1,)
-        k=np.append(k,j,axis=0)
-        result.append(k)
-        
-    result = np.array(result) 
-
-    #reshape (#Timesteps,seq_length,#modes)
-    
-    result=result.reshape(result.shape[0],result.shape[1],1)
-    
-    train_end=int(0.8*len(result))
-    res_train=result[:train_end]
-    res_test=result[train_end:]
-    
-    np.random.shuffle(res_train)
-    
-    #sample_size
-    valid=int(0.8*len(res_train))
-    Input_data=res_train[:sample_size,:sequence_length,:]
-    Output_data=res_train[:sample_size,-1,:]
-
-    Input_data_test=res_test[:sample_size,:sequence_length,:]
-    Output_data_test=res_test[:sample_size,-1,:]  
-    
-    X_train=Input_data[:valid,:,:]
-    y_train=Output_data[:valid,:]
-    
-    X_test=Input_data_test[:,:]
-    y_test=Output_data_test[:,:]
-    
-    X_valid=Input_data[valid:,:,:]
-    y_valid=Output_data[valid:,:] 
-    
-    
-    data = {
-        'train': [X_train, y_train],
-        'valid': [X_valid, y_valid],
-        'test': [X_test, y_test],
-    }
-    
-    # Re-format targets
-    for set_name in data:
-        y = data[set_name][1]
-        y = y.reshape((-1, 1, np.prod(y.shape[1:])))
-        data[set_name][1] = [y[:,:,i] for i in range(y.shape[2])]
-    
-    return data    
-    
-
-def main(shift):
+def main(shift,sample_size,batch_size,epochs):
     '''Create GPLSTM Model and Train it on the Random Walk
        Returns: Model and Training Results'''
     
-    data=Generate_data(shift)
+    data=Generate_data(shift,sample_size)
     
     # Model & training parameters
-    nb_train_samples = data['train'][0].shape[0]
-    input_shape = data['train'][0].shape[1:]
-    nb_outputs = len(data['train'][1])
-    gp_input_shape = (1,)
-    batch_size = 50
-    epochs = 20
-
-    nn_params = {
-        'H_dim': 4,
-        'H_activation': 'tanh',
-        'dropout': 0.0,
-    }
-
-    gp_params = {
-        'cov': 'SEiso', 
-        'hyp_lik': np.log(0.1),
-        'hyp_cov': [[1.0], [1.0]],
-        'inf': 'infExact',
-        'lik': 'likGauss',
-        'dlik': 'dlikExact',             
-    }
-    
-    # Retrieve model config
-    nn_configs = load_NN_configs(filename='lstm.yaml',
-                                 input_shape=input_shape,
-                                 output_shape=gp_input_shape,
-                                 params=nn_params)
-    gp_configs = load_GP_configs(filename='gp.yaml',
-                                 nb_outputs=nb_outputs,
-                                 batch_size=batch_size,
-                                 nb_train_samples=nb_train_samples,
-                                 params=gp_params)
-
-    # Construct & compile the model
-    model = assemble('GP-LSTM', [nn_configs['1H'], gp_configs['GP']])
-    loss = [gen_gp_loss(gp) for gp in model.output_layers]
-    model.compile(optimizer=Adam(1e-3), loss=loss)
-
+    model=GPLSTM(shift,lr,sample_size,batch_size)
     
     callbacks = []
     
@@ -173,7 +63,7 @@ def main(shift):
 
 if __name__ == '__main__':
 
-    history,X_test,X_train,y_train,batch_size,y_test,model=main(shift)
+    history,X_test,X_train,y_train,batch_size,y_test,model=main(shift,sample_size,batch_size,epochs)
 
     y_pred,var = model.predict(X_test,return_var=True, X_tr=X_train, Y_tr=y_train,batch_size=batch_size)
     
