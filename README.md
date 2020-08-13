@@ -13,7 +13,7 @@ from a normal distribution with mean 0 and variance <img src="https://render.git
 
 The GP-LSTM is trained for one-step-ahead predictions using a random walk with 1000 time steps.
 An uncertainty propagation algorithm is applied to propagate predictive uncertainties 10 steps into the future by sampling a given number of samples per time step using the predicted distribution.
-The results from one experiment are shown below. The first plot shows the propagation of the predicted uncertainties for one initial test point over 10 steps. The second plot  shows the predictive distributions of 20 different test points.
+The results from one experiment are shown below. The first plot shows the propagation of the predicted uncertainties for one initial test point over 10 steps. The second plot  shows the predictive distributions of 20 different test points for n=1 step ahead predictions.
 
 <img src="./Figures/RW_uncertainty_propagated.jpg" width="350" height="300" /> <img src="./Figures/RW_pred_shift1.jpg" width="350" height="300" />
 
@@ -26,7 +26,7 @@ individual taken step and hence <img src="https://render.githubusercontent.com/r
 In other words, variances are added if independent and identically distributed random variables are added.
 [A proof of method can be found here](ProofofMethods/Cumulative_Variances.pdf)
 
-For the evaluation, the GP-LSTM is trained for 2, 5 and 10 step ahead predictions and the corresponding predicted variances are displayed below:
+For the evaluation, the GP-LSTM is trained for n= 2, 5 and 10 step ahead predictions and the corresponding predicted variances are displayed below:
 
 <img src="./Figures/Grid_var_hist_2.jpg" width="250" height="200" /> <img src="./Figures/Grid_var_hist_5.jpg" width="250" height="200" /> <img src="./Figures/Grid_var_hist_10.jpg" width="250" height="200" />
 
