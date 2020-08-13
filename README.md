@@ -13,7 +13,7 @@ The GP-LSTM is trained for one-step-ahead predictions using a random walk with 1
 An uncertainty propagation algorithm is applied to propagate predictive uncertainties 10 steps into the future by sampling a given number of samples per time step using the predicted distribution.
 The results from one experiment are shown below:
 
-<img src="./Figures/RW_uncertainty_propagated.jpg" width="350" height="300" />
+<img src="./Figures/RW_uncertainty_propagated_resized.jpg" width="350" height="300" />
 
 The evaluation of the predicted distributions is based on the square root of time rule.
 According to the square root of time rule for simple random walks, the variance for a n-th step ahead prediction <img src="https://render.githubusercontent.com/render/math?math=\sigma_{n}^{2}">
