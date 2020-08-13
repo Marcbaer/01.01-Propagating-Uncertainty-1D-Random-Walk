@@ -28,4 +28,4 @@ For the evaluation, the GP-LSTM is trained for 2, 5 and 10 step ahead prediction
 
 <img src="./Figures/Grid_var_hist_2.jpg" width="250" height="200" /> <img src="./Figures/Grid_var_hist_5.jpg" width="250" height="200" /> <img src="./Figures/Grid_var_hist_10.jpg" width="250" height="200" />
 
-
+The model accurately captures the uncertainty in the random walk and cumulates the variance as excepted for multiple-steps ahead predictions.
