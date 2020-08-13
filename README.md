@@ -15,9 +15,17 @@ The results from one experiment are shown below. The first plot shows the propag
 
 <img src="./Figures/RW_uncertainty_propagated.jpg" width="350" height="300" /> <img src="./Figures/RW_pred_shift1.jpg" width="350" height="300" />
 
+The plots show that the predicted variances cover the uncertainties in the one dimensional random walk.
+
 The evaluation of the predicted distributions is based on the square root of time rule.
 According to the square root of time rule for simple random walks, the variance for a n-th step ahead prediction <img src="https://render.githubusercontent.com/render/math?math=\sigma_{n}^{2}">
 is the sum of the variances of each
 individual taken step and hence <img src="https://render.githubusercontent.com/render/math?math=n*\sigma_{1}^{2}">. 
 In other words, variances are added if independent and identically distributed random variables are added.
 [A proof of method can be found here](ProofofMethods/Cumulative_Variances.pdf)
+
+For the evaluation, the GP-LSTM is trained for 2, 5 and 10 step ahead predictions and the corresponding predicted variances are displayed below:
+
+<img src="./Figures/Grid_var_hist_2.jpg" width="250" height="200" /> <img src="./Figures/Grid_var_hist_5.jpg" width="250" height="200" /> <img src="./Figures/Grid_var_hist_10.jpg" width="250" height="200" />
+
+
