@@ -15,7 +15,7 @@ The results from one experiment are shown below. The first plot shows the propag
 
 <img src="./Figures/RW_uncertainty_propagated.jpg" width="350" height="300" /> <img src="./Figures/RW_pred_shift1.jpg" width="350" height="300" />
 
-The plots show that the predicted variances cover the uncertainties in the one dimensional random walk.
+The plots show that the predicted variances accurately cover the uncertainties in the one dimensional random walk.
 
 The evaluation of the predicted distributions is based on the square root of time rule.
 According to the square root of time rule for simple random walks, the variance for a n-th step ahead prediction <img src="https://render.githubusercontent.com/render/math?math=\sigma_{n}^{2}">
