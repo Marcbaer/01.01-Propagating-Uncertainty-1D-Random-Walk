@@ -18,7 +18,7 @@ from a normal distribution with mean 0 and variance <img src="https://render.git
 
 If <img src="https://render.githubusercontent.com/render/math?math=S_{t}"> represents the value of the random walk at time *t*, the sequence is described by:
 
-<img src="https://render.githubusercontent.com/render/math?math=S_{t+1} \ = \ S_{t} + \epsilon , \epsilon \sim \mathcal{N}(0,\,\sigma_{1}^{2})">.
+<img src="https://render.githubusercontent.com/render/math?math=S_{t+1} \ = \ S_{t} $+$ \epsilon , \epsilon \sim \mathcal{N}(0,\,\sigma_{1}^{2})">.
 
 The GP-LSTM is trained for one-step-ahead predictions using a random walk with 1000 time steps.
 An uncertainty propagation algorithm is applied to propagate predictive uncertainties n-steps into the future by sampling a n_samples per time step using the predicted distribution.
