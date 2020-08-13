@@ -11,7 +11,7 @@ from a normal distribution with mean 0 and variance <img src="https://render.git
 
 The GP-LSTM is trained for one-step-ahead predictions using a random walk with 1000 time steps.
 An uncertainty propagation algorithm is applied to propagate predictive uncertainties 10 steps into the future by sampling a given number of samples per time step using the predicted distribution.
-The results from one experiment are shown below:
+The results from one experiment are shown below. The first plot shows the propagation of the predicted uncertainties and the second one the predictive distribution for 20 different test points.
 
 <img src="./Figures/RW_uncertainty_propagated.jpg" width="350" height="300" /> <img src="./Figures/RW_pred_shift1.jpg" width="350" height="300" />
 
