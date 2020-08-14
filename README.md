@@ -1,4 +1,4 @@
-# 01.Propagating-Uncertainty-in-Dynamical-Systems
+# 01.01-Propagating-Uncertainty-1D-Random-Walk
 
 This experiment evaluates GP-LSTM's (Gaussian Process regression in combination with LSTM's) on their ability to forecast the predictive distribution of dynamical systems.
 The GP-LSTM models are built using the keras-gp library (https://github.com/alshedivat/keras-gp) with an octave engine.
