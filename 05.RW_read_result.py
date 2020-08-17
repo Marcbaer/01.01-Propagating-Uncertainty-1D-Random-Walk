@@ -1,4 +1,4 @@
-'''Reads the resulting output file from 04.RW_propagation_GPLSTM.py '''
+'''Reads and plots the resulting output file from 04.RW_propagation_GPLSTM.py '''
 
 import numpy as np
 import matplotlib.pyplot as plt

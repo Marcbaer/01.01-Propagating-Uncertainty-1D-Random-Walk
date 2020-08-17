@@ -36,22 +36,18 @@ for n in range(1,n_steps+1):
             
             #get mean, var and history of sampled index
             u=MEAN_d["mean{0}".format(n-1)][k]
-            
-                 
+                             
             #sample new point
             k2=np.random.normal(u,0.3162)
             k2=np.array(k2).reshape(1,)
             K.append(k2)
             
             #create history of prediction mode using new sampled point and old history
-            
             #Use new history to predict new mean and var
             mean_2=k2
             
             #append new history to list and predicted mean&var of sampled point
-            
             MEAN.append(mean_2)
-
                
         #append new history to dictionnaries
         K_d["K{0}".format(n)]=np.array(K)

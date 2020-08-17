@@ -19,7 +19,6 @@ start_point=10
 
 #load data
 data_shape,RW=Generate_data(shift,sample_size)
-
 data = pickle.load(open('./Results/RW_data_test'+str(test)+'.p', 'rb'),encoding='latin1')
 X_test=data['X_test']
 X_train=data['X_train']

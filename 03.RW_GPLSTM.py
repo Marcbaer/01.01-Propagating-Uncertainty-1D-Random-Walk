@@ -34,9 +34,39 @@ sample_size=1000
 batch_size=100
 
 def main(shift,sample_size,batch_size,epochs):
-    '''Create GPLSTM Model and Train it on the Random Walk
-       Returns: Model and Training Results'''
+    '''
+    Create GPLSTM Model and Train it on the Random Walk
     
+    Parameters
+    ----------
+    shift : Integer
+        Number of steps to be predicted into the future.
+    sample_size : Integer
+        Number of steps to be sampled for the random walk.
+    batch_size : Integer
+        Batch size for training.
+    epochs : Integer
+        Number of epochs for training.
+
+    Returns
+    -------
+    history : Dictionnary
+        Training history informations.
+    X_test : DataFrame
+        Training Data.
+    X_train : DataFrame
+        Training Data.
+    y_train : DataFrame
+        Training Data.
+    batch_size : Integer
+        Training parameter.
+    y_test : DataFrame
+        Training parameter.
+    model : Optimized Model
+        Optimized Model after training.
+    RW_initial : Numpy Array
+        Initial Random Walk used for training.
+    ''' 
     data,RW_initial=Generate_data(shift,sample_size)
     
     # Model & training parameters
@@ -60,11 +90,10 @@ def main(shift,sample_size,batch_size,epochs):
            
     return history,X_test,X_train,y_train,batch_size,y_test,model,RW_initial
 
-
+#Train model and save and plot results
 if __name__ == '__main__':
 
     history,X_test,X_train,y_train,batch_size,y_test,model,RW_initial=main(shift,sample_size,batch_size,epochs)
-
     y_pred,var = model.predict(X_test,return_var=True, X_tr=X_train, Y_tr=y_train,batch_size=batch_size)
     
     y_pred=np.array(y_pred)

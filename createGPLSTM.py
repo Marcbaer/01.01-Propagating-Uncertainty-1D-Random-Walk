@@ -12,18 +12,41 @@ np.random.seed(42)
 shift=1
 
 def RandomWalk(N=100, d=1):
+    '''
+    Parameters
+    ----------
+    N : Integer, optional
+        Lenght of the Random Walk. The default is 100.
+    d : Integer, optional
+        Dimensions of the Random Walk. The default is 1.
 
+    Returns
+    -------
+    TYPE Numpy Array
+        Returns the random walk.
+    '''
     return np.cumsum(np.random.normal(0,0.3162,(N,d)))
 
 
 def Generate_data(shift,sample_size=1000):
-    """Generate input data of shape (N,d) where d is the sequence length.
-    and output data of shape (N,1) for one step ahead predictions.
-    """
-    
+    '''
+    Parameters
+    ----------
+    shift : Integer
+        Defines the number of steps to be predicted into the future.
+    sample_size : Integer, optional
+        Number of steps to be sampled. The default is 1000.
+
+    Returns
+    -------
+    data : Dictionnary
+        Output data of shape (N,1) for one step ahead predictions splitted into train, test and validation set.
+    RW_initial : Numpy Array
+        Returns the initial sampled random walk.
+
+    '''
     #1D input data:
-    sequence_length=2
-    
+    sequence_length=2    
     total_length=sequence_length+shift
     
     data=RandomWalk(N=sample_size+shift+1,d=1)
@@ -81,9 +104,24 @@ def Generate_data(shift,sample_size=1000):
     return data,RW_initial
     
 
-def GPLSTM(shift,lr,sample_size,batch_size,data):
-    
-    #data,RW_initial=Generate_data(shift,sample_size)
+def GPLSTM(shift,lr,batch_size,data):
+    '''
+    Parameters
+    ----------
+    shift : Integer
+        Shift/steps into the future of predicted value.
+    lr : Float
+        Learning Rate for model training.
+    batch_size : Integer
+        Batch size for training.
+    data : Dictionnary
+        Dictionnary containing the training, test and validation data of the model.
+
+    Returns
+    -------
+    model : Optimized Model
+        Returns the optimized deep learning model.
+    '''
     # Model & training parameters
     nb_train_samples = data['train'][0].shape[0]
     input_shape = data['train'][0].shape[1:]
